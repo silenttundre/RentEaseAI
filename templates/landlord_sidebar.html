@@ -1,0 +1,29 @@
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <h2>RentEase AI</h2>
+        <p>Landlord Portal</p>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="{{ url_for('landlord_dashboard') }}" class="{{ 'active' if request.endpoint == 'landlord_dashboard' }}">
+            <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+        </a>
+        <a href="{{ url_for('landlord_properties') }}" class="{{ 'active' if request.endpoint == 'landlord_properties' }}">
+            <i class="fas fa-home"></i> <span>Properties</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-file-invoice-dollar"></i> <span>Payments</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-tools"></i> <span>Maintenance</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-envelope"></i> <span>Messages</span>
+        </a>
+        <a href="#">
+            <i class="fas fa-cog"></i> <span>Settings</span>
+        </a>
+        <a href="{{ url_for('landlord_logout') }}" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </a>
+    </nav>
+</aside>

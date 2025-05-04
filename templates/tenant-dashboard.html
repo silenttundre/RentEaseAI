@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Dashboard | RentEase AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <a href="/">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="RentEase AI" class="circle-logo">
+        </a>
+        <nav>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            <a href="{{ url_for('landlord_login') }}">For Landlords</a>
+            <a href="{{ url_for('tenant_dashboard') }}" class="active">For Tenants</a>
+            <a href="{{ url_for('tenant_logout') }}">Logout</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <h1>Welcome, {{ preferences.name }}!</h1>
+        
+        <div class="dashboard-section">
+            <h2>Your Preferences</h2>
+            <div class="preferences-card">
+                <p><strong>Email:</strong> {{ preferences.email }}</p>
+                <p><strong>Phone:</strong> {{ preferences.phone }}</p>
+                <p><strong>Max Budget:</strong> 
+                    {% if preferences.budget > 0 %}
+                        ${{ "%.2f"|format(preferences.budget) }}
+                    {% else %}
+                        Not specified
+                    {% endif %}
+                </p>
+                <p><strong>Preferred Property Type:</strong> {{ preferences.preferred_type }}</p>
+                <p><strong>Minimum Bedrooms:</strong> {{ preferences.bedrooms }}</p>
+                <p><strong>Minimum Bathrooms:</strong> {{ preferences.bathrooms }}</p>
+            </div>
+            <a href="{{ url_for('edit_tenant_preferences') }}" class="btn">Edit Preferences</a>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Your Saved Properties</h2>
+            <div class="saved-properties">
+                <p>You haven't saved any properties yet.</p>
+                <a href="{{ url_for('tenant_search') }}" class="btn">Browse Properties</a>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Your Reviews</h2>
+            <div class="reviews-list">
+                <p>You haven't written any reviews yet.</p>
+                <a href="{{ url_for('tenant_search') }}" class="btn">Find Properties to Review</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include chatbot widget -->
+    {% include 'chatbot-widget.html' %}
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentEase AI | For Tenants</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+      .pre-lease-section {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+      }
+
+      .pre-lease-section h4 {
+        margin-top: 0;
+        color: var(--nav-blue);
+      }
+      .property-actions .btn-success {
+        margin-left: 8px;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="RentEase AI" class="circle-logo">
+      </a>
+      <nav>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="{{ url_for('landlord_login') }}">For Landlords</a>
+        {% if current_user.is_authenticated and is_tenant(current_user) %}
+            <a href="{{ url_for('tenant_dashboard') }}" class="active">For Tenants</a>
+            <a href="{{ url_for('tenant_logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('tenant_login') }}" class="active">For Tenants</a>
+        {% endif %}
+    </nav>
+    </nav>
+    </header>
+    <div class="main-container">
+      <div class="search-pane">
+        <h2>Find Your Perfect Rental</h2>
+        <div class="search-inputs">
+          <select id="neighborhood">
+            <option value="">Any Neighborhood</option>
+            <option value="downtown">Downtown</option>
+            <option value="suburb">Suburbs</option>
+            <option value="university">University Area</option>
+            <option value="waterfront">Waterfront</option>
+            <option value="business">Business District</option>
+          </select>
+          <select id="bedrooms">
+            <option value="">Any Bedrooms</option>
+            <option value="1">1 Bedroom</option>
+            <option value="2">2 Bedrooms</option>
+            <option value="3">3+ Bedrooms</option>
+          </select>
+          <select id="bathrooms">
+            <option value="">Any Bathrooms</option>
+            <option value="1">1 Bath</option>
+            <option value="1.5">1.5 Baths</option>
+            <option value="2">2 Baths</option>
+            <option value="3">3+ Baths</option>
+          </select>
+          <select id="price-range">
+            <option value="">Any Price Range</option>
+            <option value="1000">Under $1,000</option>
+            <option value="1500">Under $1,500</option>
+            <option value="2000">Under $2,000</option>
+            <option value="2500">Under $2,500</option>
+            <option value="3000">Under $3,000</option>
+          </select>
+          <select id="move-in">
+            <option value="">Any Move-in Date</option>
+            <option value="immediate">Immediate</option>
+            <option value="30">Within 30 days</option>
+            <option value="60">Within 60 days</option>
+            <option value="90">Within 90 days</option>
+          </select>
+          <div class="pre-lease-section">
+            <h4>Pre-Lease Preferences</h4>
+            <select id="pre-lease-timing">
+              <option value="">When to Pre-Lease?</option>
+              <option value="asap">ASAP</option>
+              <option value="1month">1 month from now</option>
+              <option value="2months">2 months from now</option>
+              <option value="3months">3 months from now</option>
+              <option value="flexible">Flexible timing</option>
+            </select>
+            <select id="location-preference">
+              <option value="">Location Specifics</option>
+              <option value="walkable">Walkable neighborhood</option>
+              <option value="transit">Near public transit</option>
+              <option value="schools">Near good schools</option>
+              <option value="quiet">Quiet area</option>
+              <option value="vibrant">Vibrant community</option>
+            </select>
+          </div>
+          <textarea id="additional-requirements" placeholder="Additional requirements (pets, parking, amenities, etc.)"></textarea>
+        </div>
+        <button onclick="findMatches()">Find Matching Properties</button>
+      </div>
+      <div class="results-container">
+        <div class="results-pane" id="results">
+          <div class="ai-summary">
+            <h3>How It Works for Tenants</h3>
+            <div class="ai-summary-content">
+              <p>Our AI helps you find the perfect rental by:</p>
+              <ul>
+                <li>Matching your preferences with available properties</li>
+                <li>Identifying properties with discounts for early commitment</li>
+                <li>Suggesting properties that meet your specific needs</li>
+                <li>Finding options based on your pre-lease timeline</li>
+              </ul>
+              <div class="follow-up">
+                <p>
+                  <strong>Tip:</strong> Pre-leasing early often gets you better deals!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function findMatches() {
+        const neighborhood = document.getElementById('neighborhood').value;
+        const bedrooms = document.getElementById('bedrooms').value;
+        const bathrooms = document.getElementById('bathrooms').value;
+        const priceRange = document.getElementById('price-range').value;
+        const moveIn = document.getElementById('move-in').value;
+        const preLeaseTiming = document.getElementById('pre-lease-timing').value;
+        const locationPreference = document.getElementById('location-preference').value;
+        const additionalReq = document.getElementById('additional-requirements').value;
+      
+        // Show loading state
+        const resultsPane = document.getElementById('results');
+        resultsPane.innerHTML = '<p>Finding best matches for you...</p>';
+      
+        // Simulate API response with delay
+        setTimeout(() => {
+          const ai_summary = `=== Search Results ===
+      Found 5 properties matching your criteria
+      
+      2 properties offer early bird discounts
+      
+      1 property is pet-friendly
+      
+      ${preLeaseTiming ? '3 properties available for your pre-lease timing' : ''}
+      
+      === Top Recommendations ===
+      
+      123 Main St: 2BR/1BA, $1,200 (${preLeaseTiming === 'asap' ? 'Ready for immediate pre-lease' : 'Standard availability'})
+      
+      456 Oak Ave: 1BR/1BA, $950 (Pet-friendly)${locationPreference === 'walkable' ? ' - Walk Score: 92' : ''}
+      
+      789 Pine Rd: 3BR/2BA, $1,800${preLeaseTiming === '2months' ? ' - Available for pre-lease in 2 months' : ''}`;
+      
+          const response = {
+            ai_summary,
+            properties: [
+              {
+                property_id: 1,
+                address: "123 Main St",
+                bedrooms: 2,
+                bathrooms: 1,
+                price: 1200,
+                discounted_price: 1080,
+                discount_type: "Early Bird",
+                discount_value: 10,
+                image_url: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60",
+                description: "Modern apartment in downtown with great views",
+                amenities: "Parking, Laundry, Gym",
+                sqft: 900,
+                available_date: "2025-04-15",
+                location: neighborhood || "Downtown",
+                location_features: locationPreference === "walkable" ? "Walk Score: 92" : ""
+              },
+              {
+                property_id: 2,
+                address: "456 Oak Ave",
+                bedrooms: 1,
+                bathrooms: 1,
+                price: 950,
+                image_url: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60",
+                description: "Cozy apartment near university, pet-friendly",
+                amenities: "Parking, Pet-friendly",
+                sqft: 750,
+                available_date: "2025-06-01",
+                location: neighborhood || "University District",
+                location_features: locationPreference === "walkable" ? "Walk Score: 85" : ""
+              }
+            ]
+          };
+      
+          displayResults(response);
+        }, 1500);
+      }
+      
+      
+      function applyToProperty(propertyId) {
+        alert(`Application started for property ID: ${propertyId}`);
+        // In a real app, redirect or open application modal:
+        // window.location.href = `/apply/${propertyId}`;
+      }
+      
+      function displayResults(data) {
+        const resultsPane = document.getElementById('results');
+        resultsPane.innerHTML = '';
+      
+        if (data.ai_summary) {
+          const aiSummary = document.createElement('div');
+          aiSummary.className = 'ai-summary';
+      
+          let formattedText = data.ai_summary
+            .replace(/=== (.*?) ===/g, '<h4>$1</h4>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>')
+            .replace(/^- (.*?)(<br>|$)/gm, '<li>$1</li>');
+      
+          if (formattedText.includes('<li>')) {
+            formattedText = `<ul>${formattedText}</ul>`;
+          }
+      
+          aiSummary.innerHTML = `
+            <h3>AI Matching Results</h3>
+            <div class="ai-summary-content">${formattedText}</div>
+          `;
+          resultsPane.appendChild(aiSummary);
+        }
+      
+        // Add our 5 mock properties
+        const mockProperties = [
+          {
+            id: 1,
+            address: "789 Pine Ln",
+            price: 1200.00,
+            beds: 0,
+            baths: 1,
+            sqft: 500,
+            available: "2024-11-15",
+            description: "Cozy studio apartment",
+            amenities: "Laundry, close to transit",
+            image_url: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60",
+            average_rating: 4.2,
+            review_count: 15
+          },
+          {
+            id: 2,
+            address: "456 Oak Ave",
+            price: 1750.00,
+            beds: 2,
+            baths: 1,
+            sqft: 850,
+            available: "2024-12-01",
+            description: "Bright two-bedroom near downtown",
+            amenities: "Parking, dishwasher, pet-friendly",
+            image_url: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60",
+            average_rating: 4.5,
+            review_count: 23
+          },
+          {
+            id: 3,
+            address: "123 Maple St",
+            price: 1500.00,
+            beds: 1,
+            baths: 1,
+            sqft: 650,
+            available: "2024-11-20",
+            description: "Modern one-bedroom with balcony",
+            amenities: "Air conditioning, in-unit washer/dryer",
+            image_url: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60",
+            average_rating: 3.8,
+            review_count: 9
+          },
+          {
+            id: 4,
+            address: "321 Cedar Rd",
+            price: 1950.00,
+            beds: 2,
+            baths: 2,
+            sqft: 950,
+            available: "2024-12-15",
+            description: "Spacious two-bedroom in quiet neighborhood",
+            amenities: "Fitness center, rooftop patio, garage parking",
+            image_url: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60",
+            average_rating: 4.7,
+            review_count: 31
+          },
+          {
+            id: 5,
+            address: "555 Elm Dr",
+            price: 1350.00,
+            beds: 1,
+            baths: 1,
+            sqft: 700,
+            available: "2024-11-25",
+            description: "Charming one-bedroom with hardwood floors",
+            amenities: "High ceilings, stainless appliances, bike storage",
+            image_url: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60",
+            average_rating: 4.0,
+            review_count: 18
+          }
+        ];
+      
+        // Display the mock properties
+        mockProperties.forEach(property => {
+          const card = createPropertyCard(property);
+          resultsPane.appendChild(card);
+        });
+      }
+      
+
+      function createPropertyCard(property) {
+        const card = document.createElement('div');
+        card.className = 'property-card';
+        
+        const img = document.createElement('img');
+        img.className = 'property-image';
+        img.src = property.image_url || 'https://via.placeholder.com/300';
+        img.alt = property.description || 'Property Image';
+        
+        // Add ratings section
+        const ratingsHtml = `
+        <div class="property-ratings">
+            <div class="stars">
+                ${renderStars(property.average_rating || 0)}
+                <span>${property.average_rating ? property.average_rating.toFixed(1) : 'No'} rating</span>
+                <span>(${property.review_count || 0} reviews)</span>
+            </div>
+        </div>
+        `;
+        
+        const details = document.createElement('div');
+        details.className = 'property-details';
+        
+        const priceHTML = property.discounted_price ? `
+            <div class="price-container">
+              <span class="original-price">$${property.price.toFixed(2)}</span>
+              <span class="discounted-price">$${property.discounted_price.toFixed(2)}</span>
+              <span class="discount-badge">${property.discount_value}% ${property.discount_type}</span>
+            </div>` : `
+            <div class="price">$${property.price.toFixed(2)}</div>`;
+        
+        details.innerHTML = `
+          <h3>${property.address}</h3>
+          ${ratingsHtml}
+          ${priceHTML}
+      
+          <p>${property.beds} Beds | ${property.baths} Baths | ${property.sqft} sqft</p>
+          <p><strong>Available:</strong> ${property.available}</p>
+          ${property.pre_lease_info ? `
+          <p class="pre-lease-info">📅 ${property.pre_lease_info}</p>` : ''}
+          ${property.location_features ? `
+          <p class="location-features">📍 ${property.location_features}</p>` : ''}
+      
+          <p>${property.description || 'No description provided.'}</p>
+          <p>
+            <strong>Amenities:</strong> ${property.amenities || 'No amenities listed.'}
+          </p>`;
+      
+        // Add buttons
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'property-actions';
+        
+        // View details button
+        const viewButton = document.createElement('button');
+        viewButton.className = 'btn btn-primary';
+        viewButton.textContent = 'View Details';
+        viewButton.onclick = () => window.location.href = `/property/${property.id}`;
+        
+        // View photos button
+        const photosButton = document.createElement('button');
+        photosButton.className = 'btn btn-secondary';
+        photosButton.textContent = 'View Photos';
+        photosButton.onclick = () => window.location.href = `/property/${property.id}/photos`;
+        
+        // Apply button
+        const applyButton = document.createElement('button');
+        applyButton.className = 'btn btn-success';
+        applyButton.textContent = 'Apply';
+        applyButton.onclick = () => applyToProperty(property.id);
+        
+        // Schedule tour button
+        const tourButton = document.createElement('button');
+        tourButton.className = 'pre-lease-btn';
+        tourButton.textContent = 'Schedule Tour';
+        tourButton.onclick = () => alert('Tour scheduling coming soon!');
+        
+        buttonContainer.appendChild(viewButton);
+        buttonContainer.appendChild(photosButton);
+        buttonContainer.appendChild(applyButton);
+        buttonContainer.appendChild(tourButton);
+        details.appendChild(buttonContainer);
+        
+        card.appendChild(img);
+        card.appendChild(details);
+        return card;
+      }
+      
+      function renderStars(rating) {
+          const fullStars = Math.floor(rating);
+          const hasHalfStar = rating % 1 >= 0.5;
+          let stars = '';
+          
+          for (let i = 1; i <= 5; i++) {
+              if (i <= fullStars) {
+                  stars += '★';
+              } else if (i === fullStars + 1 && hasHalfStar) {
+                  stars += '½';
+              } else {
+                  stars += '☆';
+              }
+          }
+          return stars;
+      }
+      
+      function showReviewModal(propertyId) {
+          // Implement a modal for writing reviews
+          const modal = document.createElement('div');
+          modal.className = 'review-modal';
+          modal.innerHTML = `
+              <div class="modal-content">
+                  <h3>Write a Review</h3>
+                  <div class="star-rating">
+                      ${[1, 2, 3, 4, 5].map(i => 
+                          `<span class="star" data-rating="${i}">☆</span>`
+                      ).join('')}
+                  </div>
+                  <textarea id="review-text" placeholder="Share your experience..."></textarea>
+                  <button onclick="submitReview(${propertyId})">Submit Review</button>
+                  <button onclick="this.closest('.review-modal').remove()">Cancel</button>
+              </div>
+          `;
+          
+          // Add star selection functionality
+          modal.querySelectorAll('.star').forEach(star => {
+              star.addEventListener('click', function() {
+                  const rating = parseInt(this.dataset.rating);
+                  const stars = modal.querySelectorAll('.star');
+                  stars.forEach((s, i) => {
+                      s.textContent = i < rating ? '★' : '☆';
+                  });
+                  modal.dataset.rating = rating;
+              });
+          });
+          
+          document.body.appendChild(modal);
+      }
+      
+      function submitReview(propertyId) {
+          const rating = document.querySelector('.review-modal').dataset.rating;
+          const reviewText = document.getElementById('review-text').value;
+          
+          if (!rating) {
+              alert('Please select a rating');
+              return;
+          }
+          
+          fetch(`/property/${propertyId}/review`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  rating: parseInt(rating),
+                  review_text: reviewText
+              })
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.error) {
+                  alert(data.error);
+              } else {
+                  alert('Review submitted successfully!');
+                  document.querySelector('.review-modal').remove();
+                  // Refresh the property display
+                  findMatches();
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert('Failed to submit review');
+          });
+      }
+    </script>
+    <!-- Include chatbot widget -->
+    {% include 'chatbot-widget.html' %}
+  </body>
+</html>

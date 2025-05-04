@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <title>RentEase AI | Smart Pre-Leasing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .ai-summary {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .property-card {
+            display: flex;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .property-card .price {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        .property-card .price .original-price {
+            text-decoration: line-through;
+            color: gray;
+            margin-right: 8px; /* Add spacing between prices */
+        }
+        
+        .property-card .price .discounted-price {
+            color: #e63946; /* A nicer red color */
+            font-weight: bold;
+        }
+
+        .property-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .property-details {
+            padding: 10px;
+            flex: 1;
+        }
+
+        .property-details h3 {
+            margin-top: 0;
+        }
+
+        .pre-lease-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+    <style>
+        /* Loading spinner styles */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+    
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="RentEase AI" class="circle-logo">
+        </a>
+        <nav>
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+          <a href="{{ url_for('landlord_login') }}">For Landlords</a>
+          <a href="/tenant">For Tenants</a>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <!-- Fixed Search Pane -->
+        <div class="search-pane">
+            <h2>Find Your Future Home</h2>
+            <textarea placeholder="Describe your ideal home (e.g., '2-bedroom apartment with mountain views')"></textarea>
+
+            <div class="search-inputs">
+                <select id="location">
+                    <option value="">Any Location</option>
+                    <option value="downtown">Downtown</option>
+                    <option value="suburb">Suburb</option>
+                </select>
+
+                <select id="price">
+                    <option value="">Any Price</option>
+                    <option value="1000">Under $1,000</option>
+                    <option value="2000">Under $2,000</option>
+                    <option value="3000">Under $3,000</option>
+                    <option value="4000">Under $4,000</option>
+                </select>
+
+                <select id="date">
+                    <option value="">Any Date</option>
+                    <option value="2024-10-01">October 2024</option>
+                    <option value="2025-01-01">January 2025</option>
+                </select>
+            </div>
+
+            <button onclick="searchProperties()">Search Properties</button>
+        </div>
+
+        <!-- Scrollable Results Pane -->
+        <div class="results-container">
+            <div class="results-pane" id="results">
+                <!-- Sample Property 1 -->
+                <!-- The sample properties are removed to make space for the dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load sample properties when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/sample_properties')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.properties && data.properties.length > 0) {
+                        displayProperties(data.properties);
+                    }
+                })
+                .catch(error => console.error('Error loading samples:', error));
+        });
+    
+        function displayProperties(properties) {
+            const resultsPane = document.getElementById('results');
+            resultsPane.innerHTML = '<h3>Featured Properties</h3>';
+            
+            properties.forEach(property => {
+                const card = createPropertyCard(property);
+                resultsPane.appendChild(card);
+            });
+        }
+    
+        function createPropertyCard(property) {
+            const card = document.createElement('div');
+            card.className = 'property-card';
+    
+            const img = document.createElement('img');
+            img.className = 'property-image';
+            img.src = property.image_url || 'https://via.placeholder.com/200';
+            img.alt = property.description || 'Property Image';
+    
+            const details = document.createElement('div');
+            details.className = 'property-details';
+    
+            const priceHTML = property.discounted_price ? 
+                `<div class="price-container">
+                    <span class="original-price">$${property.price.toFixed(2)}</span>
+                    <span class="discounted-price">$${property.discounted_price.toFixed(2)}</span>
+                    <span class="discount-badge">${property.discount_value}% ${property.discount_type}</span>
+                </div>` :
+                `<div class="price">$${property.price.toFixed(2)}</div>`;
+                
+            details.innerHTML = `
+                <h3>${property.address}</h3>
+                ${priceHTML}
+                <p>${property.bedrooms} Beds | ${property.bathrooms} Baths | ${property.sqft} sqft</p>
+                <p>Available: ${property.available_date}</p>
+                <p>${property.description || 'No description provided.'}</p>
+                <p><strong>Amenities:</strong> ${property.amenities || 'No amenities listed.'}</p>`;
+    
+            const preLeaseButton = document.createElement('button');
+            preLeaseButton.className = 'pre-lease-btn';
+            preLeaseButton.textContent = 'Pre-Lease Now';
+            preLeaseButton.onclick = () => alert('Pre-Leasing functionality coming soon!');
+    
+            details.appendChild(preLeaseButton);
+            card.appendChild(img);
+            card.appendChild(details);
+    
+            return card;
+        }
+    
+        function searchProperties() {
+            const description = document.querySelector('textarea').value;
+            const location = document.getElementById('location').value;
+            const price = document.getElementById('price').value;
+            const date = document.getElementById('date').value;
+    
+            // Show loading spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+    
+            fetch('/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `description=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}&price=${encodeURIComponent(price)}&date=${encodeURIComponent(date)}`,
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                const resultsPane = document.getElementById('results');
+                resultsPane.innerHTML = '';
+    
+                // Replace the AI summary rendering part in your searchProperties() function with:
+                if (data.ai_summary) {
+                    const aiSummary = document.createElement('div');
+                    aiSummary.className = 'ai-summary';
+                    
+                    // Convert the AI response to formatted HTML
+                    let formattedText = data.ai_summary
+                        .replace(/=== (.*?) ===/g, '<h4>$1</h4>')  // Convert === headers === to h4
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Convert **bold** to strong
+                        .replace(/\n/g, '<br>')  // Convert newlines to breaks
+                        .replace(/^- (.*?)(<br>|$)/g, '<li>$1</li>');  // Convert bullets to list items
+                    
+                    // Wrap bullet points in a UL
+                    formattedText = formattedText.replace(/<li>.*?<\/li>/g, function(match) {
+                        return '<ul>' + match.replace(/<li>(.*?)<\/li>/g, '<li>$1</li>') + '</ul>';
+                    });
+                    
+                    aiSummary.innerHTML = `<h3>AI Assistant</h3><div class="ai-summary-content">${formattedText}</div>`;
+                    resultsPane.appendChild(aiSummary);
+                }
+    
+                if (data.properties && data.properties.length > 0) {
+                    data.properties.forEach(property => {
+                        const card = createPropertyCard(property);
+                        resultsPane.appendChild(card);
+                    });
+                } else {
+                    resultsPane.innerHTML = '<p>No properties found matching your criteria.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = 
+                    `<p class="error-message">Error loading properties. Please try again.</p>`;
+            })
+            .finally(() => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            });
+        }
+        function adjustResultsHeight() {
+            if (window.innerWidth <= 768) {
+                const searchPane = document.querySelector('.search-pane');
+                const resultsContainer = document.querySelector('.results-container');
+                const searchPaneHeight = searchPane.offsetHeight;
+                resultsContainer.style.height = `calc(100vh - ${searchPaneHeight}px - 72px)`;
+            }
+        }
+
+        function handleAIResponse(data) {
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            
+            // Create container for AI response
+            const aiContainer = document.createElement('div');
+            aiContainer.className = 'ai-summary-html';
+            
+            // Safely insert the HTML (this is secure because it comes from our server)
+            aiContainer.innerHTML = data.ai_summary;
+            
+            results.appendChild(aiContainer);
+            
+            // Render property cards as before
+            data.properties.forEach(property => {
+                results.appendChild(createPropertyCard(property));
+            });
+        }
+        
+        function askFollowUp(question) {
+            document.querySelector('textarea').value = question;
+            searchProperties();
+        }
+
+        // Run on load and resize
+        window.addEventListener('load', adjustResultsHeight);
+        window.addEventListener('resize', adjustResultsHeight);
+    </script>
+    <div class="overlay" id="overlay"></div>
+        <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+    <!-- Include chatbot widget -->
+    {% include 'chatbot-widget.html' %}
+</body>
+</html>

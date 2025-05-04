@@ -1,0 +1,264 @@
+<!-- chatbot-widget.html -->
+<div class="chatbot-container" id="chatbot-container">
+    <!-- Minimized State -->
+    <div class="chatbot-icon" onclick="toggleChatbot()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+        </svg>
+    </div>
+    
+    <!-- Expanded State -->
+    <div class="chatbot-expanded">
+        <div class="chatbot-header" onclick="toggleChatbot()">
+            <h3>RentEase Assistant</h3>
+            <span class="chatbot-close">×</span>
+        </div>
+        <div class="chatbot-body" id="chatbot-body">
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chatbot-message bot-message">
+                    Hi there! I'm your RentEase AI assistant. How can I help you today?
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input" placeholder="Type your message...">
+                <button onclick="sendChatMessage()" class="chatbot-send-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+                      <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Chatbot Widget Styles */
+    .chatbot-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+        transition: all 0.3s ease;
+    }
+
+    .chatbot-icon {
+        width: 60px;
+        height: 60px;
+        background-color: #2563eb;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .chatbot-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .chatbot-expanded {
+        width: 380px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        transform: scale(0);
+        transform-origin: bottom right;
+        opacity: 0;
+        transition: all 0.3s ease;
+        height: 0;
+    }
+
+    .chatbot-container.expanded .chatbot-expanded {
+        transform: scale(1);
+        opacity: 1;
+        height: calc(100vh - 100px); /* Full viewport height minus some margin */
+        max-height: 800px; /* Maximum height */
+    }
+
+    .chatbot-header {
+        background-color: #2563eb;
+        color: white;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .chatbot-header h3 {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .chatbot-close {
+        font-size: 24px;
+        line-height: 1;
+    }
+
+    .chatbot-body {
+        display: flex;
+        flex-direction: column;
+        height: calc(100% - 50px); /* Subtract header height */
+    }
+
+    .chatbot-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+    }
+
+    .chatbot-message {
+        margin-bottom: 12px;
+        padding: 10px 15px;
+        border-radius: 18px;
+        max-width: 80%;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .bot-message {
+        background: #f1f5f9;
+        color: #1e293b;
+        border-bottom-left-radius: 4px;
+        margin-right: auto;
+    }
+
+    .user-message {
+        background: #2563eb;
+        color: white;
+        border-bottom-right-radius: 4px;
+        margin-left: auto;
+    }
+
+    .chatbot-input {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .chatbot-input input {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        outline: none;
+        font-size: 14px;
+    }
+
+    .chatbot-send-btn {
+        width: 40px;
+        height: 40px;
+        background-color: #2563eb;
+        border: none;
+        border-radius: 50%;
+        margin-left: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .chatbot-send-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    @media (max-width: 768px) {
+        .chatbot-container {
+            bottom: 20px;
+            right: 20px;
+        }
+        
+        .chatbot-expanded {
+            width: calc(100vw - 40px); /* Full width minus margins */
+            right: 20px;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .chatbot-container.expanded .chatbot-expanded {
+            height: calc(100vh - 80px); /* Adjust for mobile */
+        }
+    }
+</style>
+
+<script>
+    function toggleChatbot() {
+        const container = document.getElementById('chatbot-container');
+        container.classList.toggle('expanded');
+        
+        // Auto-focus input when expanded
+        if (container.classList.contains('expanded')) {
+            setTimeout(() => {
+                document.getElementById('chatbot-input').focus();
+            }, 300);
+        }
+    }
+
+    // Close chat when clicking the X
+    document.querySelector('.chatbot-close').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('chatbot-container').classList.remove('expanded');
+    });
+    
+    function sendChatMessage() {
+        const input = document.getElementById('chatbot-input');
+        const message = input.value.trim();
+        if (!message) return;
+        
+        const messagesContainer = document.getElementById('chatbot-messages');
+        
+        // Add user message
+        messagesContainer.innerHTML += `
+            <div class="chatbot-message user-message">
+                ${message}
+            </div>
+        `;
+        
+        input.value = '';
+        
+        // Simulate bot response
+        setTimeout(() => {
+            const responses = [
+                "I can help you with tenant screening, lease agreements, and property management questions.",
+                "Based on your vacancy rate, I'd recommend offering a small discount for early commitment.",
+                "I've checked your listings - 456 Oak Ave has been vacant for 3 weeks. Would you like me to suggest some marketing strategies?",
+                "Your average rent collection rate is 98%, which is excellent!",
+                "I can generate a lease agreement for you. Just provide the tenant details."
+            ];
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            messagesContainer.innerHTML += `
+                <div class="chatbot-message bot-message">
+                    ${randomResponse}
+                </div>
+            `;
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 1000);
+        
+        // Scroll to bottom after user message
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Allow pressing Enter to send chat message
+    document.getElementById('chatbot-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendChatMessage();
+        }
+    });
+
+    // Adjust height on window resize
+    window.addEventListener('resize', function() {
+        const container = document.getElementById('chatbot-container');
+        if (container.classList.contains('expanded')) {
+            const expanded = document.querySelector('.chatbot-expanded');
+            expanded.style.height = window.innerWidth > 768 ? 
+                'calc(100vh - 100px)' : 
+                'calc(100vh - 80px)';
+        }
+    });
+</script>

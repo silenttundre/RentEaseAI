@@ -1,0 +1,635 @@
+{% extends "landlord_base.html" %}
+
+{% block title %}
+    {% if request.endpoint == 'landlord_dashboard' %}
+        Dashboard | RentEase AI
+    {% else %}
+        Properties | RentEase AI
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Sidebar Styles */
+    .sidebar {
+        width: 260px;
+        background: #1e293b;
+        color: white;
+        padding: 20px 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        overflow-y: auto;
+    }
+    
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        padding: 0 15px;
+    }
+    
+    .sidebar-nav a {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        color: #e2e8f0;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+    
+    .sidebar-nav a:hover {
+        background: #334155;
+    }
+    
+    .sidebar-nav a.active {
+        background: #3b82f6;
+        color: white;
+    }
+    
+    .sidebar-nav a i {
+        width: 24px;
+        text-align: center;
+        margin-right: 10px;
+        font-size: 16px;
+    }
+    
+    .sidebar-nav .logout-btn {
+        margin-top: auto; /* Pushes logout to bottom */
+        color: #f87171;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 100%;
+            position: relative;
+            height: auto;
+        }
+        
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+        }
+    }
+</style>
+<style>
+    /* ===== Main Layout ===== */
+    .main-content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        padding: 30px;
+        background: #f8fafc;
+        min-height: 100vh;
+    }
+
+    /* ===== Dashboard Header ===== */
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 28px;
+        color: #1e293b;
+        margin: 0;
+        font-weight: 600;
+    }
+    
+    .user-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .notification-bell {
+        position: relative;
+        font-size: 18px;
+        color: #64748b;
+        cursor: pointer;
+    }
+    
+    .notification-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ===== Dashboard Grid Layout ===== */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    /* ===== Stats Section ===== */
+    .stats-section {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    .stats-section h2 {
+        font-size: 18px;
+        color: #1e293b;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .stat-card {
+        padding: 20px;
+        border-radius: 8px;
+        background: #f8fafc;
+        border-left: 4px solid #3b82f6;
+    }
+    
+    .stat-card h3 {
+        font-size: 14px;
+        color: #64748b;
+        margin: 0 0 10px 0;
+        font-weight: 500;
+    }
+    
+    .stat-card .stat-value {
+        font-size: 24px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    /* ===== Quick Actions Section ===== */
+    .quick-actions-section {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    .quick-actions-section h2 {
+        font-size: 18px;
+        color: #1e293b;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        background: #3b82f6;
+        color: white;
+        text-decoration: none;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+    
+    .action-btn:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+    }
+    
+    .action-btn i {
+        font-size: 18px;
+    }
+    
+    .action-btn.secondary {
+        background: #10b981;
+    }
+    
+    .action-btn.secondary:hover {
+        background: #059669;
+    }
+
+    /* ===== Properties Section ===== */
+    .properties-section {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .properties-section h2 {
+        font-size: 20px;
+        color: #1e293b;
+        margin: 0;
+    }
+    
+    .property-count {
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .property-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .property-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .property-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .property-image {
+        height: 180px;
+        background: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        overflow: hidden; /* Add this to contain the image */
+    }
+    
+    .property-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* This ensures the image covers the area without distorting */
+        object-position: center;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .property-details {
+        padding: 20px;
+    }
+    
+    .property-card h3 {
+        font-size: 18px;
+        color: #1e293b;
+        margin: 0 0 10px 0;
+    }
+    
+    .property-meta {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        color: #64748b;
+        font-size: 14px;
+    }
+    
+    .property-meta i {
+        margin-right: 5px;
+    }
+    
+    .property-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+    
+    .status-occupied {
+        background: #dcfce7;
+        color: #166534;
+    }
+    
+    .status-vacant {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .property-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #2563eb;
+    }
+    
+    .btn-secondary {
+        background: #e2e8f0;
+        color: #334155;
+    }
+    
+    .btn-secondary:hover {
+        background: #cbd5e1;
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #64748b;
+    }
+    
+    .empty-state i {
+        color: #cbd5e1;
+        margin-bottom: 15px;
+    }
+    
+    .empty-state h3 {
+        color: #334155;
+        margin: 10px 0;
+    }
+    
+    .empty-state p {
+        margin-bottom: 20px;
+    }
+    
+    .add-property-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: #3b82f6;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .add-property-btn:hover {
+        background: #2563eb;
+    }
+
+    /* ===== Responsive Design ===== */
+    @media (max-width: 1200px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .main-content {
+            margin-left: 0;
+            width: 100%;
+            padding: 20px;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .property-list {
+            grid-template-columns: 1fr;
+        }
+        
+        .dashboard-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .property-image {
+            height: 150px;
+        }
+    }
+
+    /* Add this to your existing styles */
+    .spinner {
+        margin-left: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .spinner.hidden {
+        display: none;
+    }
+
+    .fa-spin {
+        animation: fa-spin 2s infinite linear;
+    }
+
+    @keyframes fa-spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="dashboard-header">
+        <h1>
+            {% if request.endpoint == 'landlord_dashboard' %}
+                Welcome back, {{ current_user.first_name }}!
+            {% else %}
+                Your Properties
+            {% endif %}
+        </h1>
+        <div class="user-actions">
+            <div class="notification-bell">
+                <i class="fas fa-bell"></i>
+                <span class="notification-count">3</span>
+            </div>
+        </div>
+    </div>
+
+    {% if request.endpoint == 'landlord_dashboard' %}
+        <!-- Dashboard Grid Layout -->
+        <div class="dashboard-grid">
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <h2>Property Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Properties</h3>
+                        <p class="stat-value">{{ properties|length if properties else 0 }}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Vacancy Rate</h3>
+                        <p class="stat-value">{{ vacancy_rate|default(0) }}%</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Avg. Monthly Rent</h3>
+                        <p class="stat-value">${{ "%.2f"|format(avg_rent|default(0)) }}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pending Applications</h3>
+                        <p class="stat-value">{{ pending_applications|default(0) }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions Section -->
+            <section class="quick-actions-section">
+                <h2>Quick Actions</h2>
+                <div class="action-buttons">
+                    <a href="{{ url_for('add_property_form') }}" class="action-btn">
+                        <i class="fas fa-plus"></i>
+                        <span>Add New Property</span>
+                    </a>
+                    <a href="{{ url_for('find_tenants_for_all_properties') }}" class="action-btn secondary" id="findTenantsBtn">
+                        <i class="fas fa-search"></i>
+                        <span>Find Qualified Tenants</span>
+                        <span id="findTenantsSpinner" class="spinner hidden">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </a>
+                    <a href="#" class="action-btn">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Generate Reports</span>
+                    </a>
+                </div>
+            </section>        
+        </div>
+    {% endif %}
+
+    <!-- Properties Section -->
+    <section class="properties-section">
+        <div class="section-header">
+            <h2>
+                {% if request.endpoint == 'landlord_dashboard' %}
+                    Recent Properties
+                {% else %}
+                    All Properties
+                {% endif %}
+            </h2>
+            {% if properties %}
+                <div class="property-count">{{ properties|length }} properties</div>
+            {% endif %}
+        </div>
+        
+        {% if properties %}
+            <div class="property-list">
+                {% for property in properties %}
+                <div class="property-card">
+                    <div class="property-image">
+                        <img src="{{ property.image_url or 'https://via.placeholder.com/300x180?text=No+Image' }}" alt="{{ property.address }}">
+                    </div>
+                    <div class="property-details">
+                        <h3>{{ property.address }}</h3>
+                        <div class="property-meta">
+                            <span><i class="fas fa-home"></i> {{ property.location or 'N/A' }}</span>
+                            <span><i class="fas fa-dollar-sign"></i> ${{ "%.2f"|format(property.price) }}/mo</span>
+                            <span><i class="fas fa-bed"></i> {{ property.bedrooms }} BR</span>
+                            <span><i class="fas fa-bath"></i> {{ property.bathrooms }} BA</span>
+                            <span><i class="fas fa-ruler-combined"></i> {{ property.sqft|int }} sqft</span>
+                        </div>
+                        <div class="property-status-badge status-{% if property.available_date > today %}occupied{% else %}vacant{% endif %}">
+                            {% if property.available_date > today %}
+                                <i class="fas fa-check-circle"></i> Occupied
+                            {% else %}
+                                <i class="fas fa-exclamation-circle"></i> Vacant
+                            {% endif %}
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn btn-primary" onclick="window.location.href='/property/{{ property.property_id }}'">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn btn-secondary" onclick="window.location.href='/property/{{ property.property_id }}/edit'">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-home fa-3x"></i>
+                <h3>No Properties Found</h3>
+                <p>You haven't added any properties yet. Get started by adding your first property.</p>
+                <a href="{{ url_for('add_property_form') }}" class="add-property-btn">
+                    <i class="fas fa-plus"></i> Add New Property
+                </a>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Function to handle property management
+    function manageProperty(propertyId) {
+        window.location.href = `/property/${propertyId}`;
+    }
+
+    // Function to handle tenant search
+    // Function to handle tenant search
+    function findTenants() {
+        const btn = document.getElementById('findTenantsBtn');
+        const spinner = document.getElementById('findTenantsSpinner');
+        
+        // Show spinner
+        spinner.classList.remove('hidden');
+        
+        // Disable button to prevent multiple clicks
+        btn.style.pointerEvents = 'none';
+        
+        // Proceed with the navigation
+        window.location.href = "{{ url_for('find_tenants_for_all_properties') }}";
+    }
+
+    // Initialize any dashboard widgets
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add click handler to the Find Tenants button
+        const findTenantsBtn = document.getElementById('findTenantsBtn');
+        if (findTenantsBtn) {
+            findTenantsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                findTenants();
+            });
+        }
+    });
+</script>
+{% endblock %}

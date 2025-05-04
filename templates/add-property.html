@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Property | RentEase AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* Add header styles if not in your main CSS */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .property-form {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-actions {
+            margin-top: 1.5rem;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    
+    <div class="property-form">
+        <h2>Add New Property</h2>
+        <form id="propertyForm">
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="location">Location/Neighborhood</label>
+                <input type="text" id="location" name="location" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group" style="width: 48%; float: left;">
+                    <label for="price">Monthly Rent ($)</label>
+                    <input type="number" id="price" name="price" required>
+                </div>
+                <div class="form-group" style="width: 48%; float: right;">
+                    <label for="discount_value">Discount (%)</label>
+                    <input type="number" id="discount_value" name="discount_value" min="0" max="100" value="0">
+                </div>
+                <div style="clear: both;"></div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group" style="width: 30%; float: left;">
+                    <label for="bedrooms">Bedrooms</label>
+                    <input type="number" id="bedrooms" name="bedrooms" min="1" required>
+                </div>
+                <div class="form-group" style="width: 30%; float: left; margin-left: 5%;">
+                    <label for="bathrooms">Bathrooms</label>
+                    <input type="number" id="bathrooms" name="bathrooms" min="1" step="0.5" required>
+                </div>
+                <div class="form-group" style="width: 30%; float: right;">
+                    <label for="sqft">Square Feet</label>
+                    <input type="number" id="sqft" name="sqft" min="100">
+                </div>
+                <div style="clear: both;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="amenities">Amenities (comma separated)</label>
+                <input type="text" id="amenities" name="amenities" placeholder="e.g., Parking, Laundry, Gym">
+            </div>
+            
+            <div class="form-group">
+                <label for="available_date">Available Date</label>
+                <input type="date" id="available_date" name="available_date" required>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" onclick="window.history.back()" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Property</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('propertyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            fetch('/property/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams(data).toString()
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Property added successfully!');
+                    // Redirect to the dashboard which shows properties
+                    window.location.href = '/landlord/dashboard';
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
+        });
+                
+        // Set default date to today
+        document.getElementById('available_date').valueAsDate = new Date();
+    </script>
+</body>
+</html>

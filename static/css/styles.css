@@ -1,0 +1,1177 @@
+:root {
+  --primary: #2563eb;
+  --nav-blue: #1d4ed8;
+  --background: #f8fafc;
+  --text: #1e293b;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Circular Logo */
+.circle-logo {
+  border-radius: 50%;
+  width: 40px;  /* Adjust as needed */
+  height: 40px; /* Adjust as needed */
+  object-fit: cover;
+  border: 2px solid white; /* Optional white border */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional subtle shadow */
+}
+
+/* Add hover effect */
+.circle-logo:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* Ensure smooth loading */
+.circle-logo {
+  display: block;
+  background-color: #f1f5f9; /* Fallback color while loading */
+}
+
+/* Base Styles */
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: var(--text);
+}
+
+html {
+  touch-action: manipulation;
+  overflow-x: hidden;
+}
+
+/* Header */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: var(--nav-blue);
+  padding: 8px 5%;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: 48px;
+}
+
+/* Adjust header spacing if needed */
+header img {
+  margin-right: 12px; /* Reduced from 16px for better spacing */
+}
+
+nav {
+  display: flex;
+  gap: 0;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  padding: 12px 16px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+nav a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Main Layout */
+.main-container {
+  display: flex;
+  flex-direction: row;
+  margin-top: 64px;
+  width: 100%;
+  height: calc(100vh - 64px);
+}
+
+/* Search Pane */
+.search-pane {
+  width: 320px;
+  padding: 20px;
+  background: white;
+  border-right: 1px solid #e2e8f0;
+  overflow-y: auto;
+}
+
+.search-pane h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: var(--text);
+}
+
+.search-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+textarea, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  width: 100%;
+  transition: opacity 0.2s;
+  min-height: 44px;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Results Container */
+.results-container {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
+}
+
+.results-pane {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Property Cards */
+.property-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.property-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.property-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.property-details {
+  padding: 16px;
+}
+
+.property-details h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+}
+
+.property-details p {
+  margin: 6px 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.pre-lease-btn {
+  margin-top: 12px;
+  background: #10b981;
+  min-height: 44px;
+}
+
+/* Price Styling */
+.price-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.price {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: gray;
+  font-size: 0.9rem;
+}
+
+.discounted-price {
+  color: #e63946;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.discount-badge {
+  background: #f8fafc;
+  color: #e63946;
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: rgba(255,255,255,0.9);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  /* Header */
+  header {
+      padding: 6px 5%;
+      height: 44px;
+  }
+  
+  header img {
+      height: 30px;
+      margin-bottom: 6px;
+      margin-right: 0;
+  }
+  
+  nav {
+      width: 100%;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding-bottom: 5px;
+  }
+  
+  nav a {
+      padding: 8px 10px;
+      font-size: 0.85rem;
+  }
+  
+  /* Main Layout */
+  .main-container {
+      flex-direction: column;
+      height: auto;
+      min-height: calc(100vh - 44px);
+      margin-top: 44px;
+  }
+  
+  /* Search Pane */
+  .search-pane {
+      width: 100%;
+      padding: 15px;
+      border-right: none;
+      border-bottom: 1px solid #e2e8f0;
+      height: auto;
+      overflow: visible;
+  }
+  
+  /* Results Container */
+  .results-container {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      height: auto;
+      max-height: calc(100vh - 44px - var(--search-pane-height, 300px));
+  }
+  
+  /* Form Elements */
+  textarea, select {
+      padding: 10px;
+      font-size: 16px;
+  }
+  
+  button {
+      padding: 12px;
+  }
+  
+  /* Property Cards */
+  .property-card {
+      flex-direction: column;
+  }
+  
+  .property-image {
+      width: 100%;
+      height: auto;
+      max-height: 250px;
+  }
+  
+  .property-details {
+      padding: 15px;
+  }
+  
+  /* Prevent hover effects on touch devices */
+  @media (hover: none) {
+      .property-card:hover {
+          transform: none;
+          box-shadow: var(--card-shadow);
+      }
+      
+      button:hover {
+          opacity: 1;
+      }
+  }
+}
+
+@media (max-width: 768px) {
+  .circle-logo {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 0; /* Remove any bottom margin if present */
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .search-pane h2 {
+      font-size: 1.3rem;
+  }
+  
+  .property-details h3 {
+      font-size: 1rem;
+  }
+  
+  .price-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+  }
+  
+  .pre-lease-btn {
+      width: 100%;
+  }
+}
+
+/* iOS Safe Area Insets */
+@supports (padding: max(0px)) {
+  header {
+      padding-top: max(8px, env(safe-area-inset-top));
+      padding-bottom: 8px;
+  }
+  
+  .main-container {
+      margin-top: calc(64px + env(safe-area-inset-top));
+  }
+  
+  @media (max-width: 768px) {
+      header {
+          padding-top: max(6px, env(safe-area-inset-top));
+      }
+      
+      .main-container {
+          margin-top: calc(44px + env(safe-area-inset-top));
+      }
+  }
+}
+
+.ai-summary {
+  background: #f8f9fa;
+  border-left: 4px solid #2563eb;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 0 8px 8px 0;
+}
+
+.follow-up {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px dashed #ddd;
+}
+
+.quick-questions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.quick-questions button {
+  background: #e9ecef;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-questions button:hover {
+  background: #dee2e6;
+}
+
+/* AI Summary Styling */
+.ai-summary {
+    background: #f8f9fa;
+    border-left: 4px solid #2563eb;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 0 8px 8px 0;
+}
+
+.ai-summary h3 {
+    color: #1e293b;
+    margin-top: 0;
+    font-size: 1.3rem;
+}
+
+.ai-summary h4 {
+    color: #334155;
+    margin: 20px 0 10px 0;
+    font-size: 1.1rem;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.ai-summary-content {
+    line-height: 1.6;
+}
+
+.ai-summary-content strong {
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.ai-summary-content ul {
+    padding-left: 20px;
+    margin: 10px 0;
+    list-style-type: disc;
+}
+
+.ai-summary-content li {
+    margin-bottom: 8px;
+}
+
+.ai-summary-content br {
+    margin-bottom: 10px;
+    display: block;
+    content: "";
+}
+
+.match-badge {
+    background: #4ade80;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin-left: 8px;
+    font-weight: 500;
+}
+
+/* for Landlord UI */
+/* Dashboard Styles */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  grid-column: 1 / -1;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.stat-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  color: #64748b;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+  color: #1e293b;
+}
+
+.dashboard-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.property-list {
+  display: grid;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+
+/* ===================== */
+/* CHATBOT CONTAINER */
+/* ===================== */
+.chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+/* ===================== */
+/* MINIMIZED STATE */
+/* ===================== */
+.chatbot-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.chatbot-icon:hover {
+  transform: scale(1.1);
+  background: #1d4ed8;
+}
+
+.chatbot-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: white;
+}
+
+/* ===================== */
+/* EXPANDED STATE */
+/* ===================== */
+.chatbot-expanded {
+  display: none;
+  width: 380px;  /* Increased from 350px */
+  height: 500px; /* Increased from 400px */
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.chatbot-container.expanded .chatbot-icon {
+  display: none;
+}
+
+.chatbot-container.expanded .chatbot-expanded {
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===================== */
+/* CHAT HEADER */
+/* ===================== */
+.chatbot-header {
+  background: var(--primary);
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.chatbot-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.chatbot-close {
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.chatbot-close:hover {
+  transform: scale(1.2);
+}
+
+/* ===================== */
+/* CHAT BODY & MESSAGES */
+/* ===================== */
+.chatbot-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+}
+
+.chatbot-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+
+.chatbot-message {
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  line-height: 1.4;
+  font-size: 0.95rem;
+  animation: messageIn 0.2s ease;
+}
+
+.chatbot-input button {  /* Better to target existing class */
+  background: var(--primary);
+  border: none;
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  min-width: 46px; /* Prevents squishing */
+  min-height: 46px; /* Prevents squishing */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 8px; /* Space from input */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle depth */
+}
+
+.chatbot-input button:hover {
+  background: #1d4ed8;
+  transform: scale(1.05); /* Subtle grow effect */
+}
+
+.chatbot-input button:active {
+  transform: scale(0.98); /* Click feedback */
+}
+
+.chatbot-input button svg {
+  width: 24px;
+  height: 24px;
+  fill: white;
+  transition: transform 0.2s;
+}
+
+.chatbot-input button:hover svg {
+  transform: translateX(2px); /* Animate icon on hover */
+}
+
+.chatbot-send-btn {
+  background: var(--primary) !important;
+  border: none !important;
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0 !important; /* Remove any default padding */
+  margin: 0 0 0 8px !important; /* Add space between input and button */
+}
+
+.chatbot-send-btn svg {
+  width: 24px !important;
+  height: 24px !important;
+  fill: white !important;
+  display: block !important;
+}
+
+@keyframes messageIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.bot-message {
+  background: #f1f5f9;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  color: #1e293b;
+}
+
+.user-message {
+  background: var(--primary);
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+/* ===================== */
+/* CHAT INPUT AREA */
+/* ===================== */
+.chatbot-input {
+  padding: 12px;
+  background: #f8f9fa;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.chatbot-input input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+  min-height: 40px;
+}
+
+.chatbot-input input:focus {
+  border-color: var(--primary);
+}
+
+.chatbot-input button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.chatbot-input button:hover {
+  background: #1d4ed8;
+}
+
+.chatbot-input button svg {
+  width: 24px;
+  height: 24px;
+  fill: white;
+}
+
+/* ===================== */
+/* MOBILE RESPONSIVENESS */
+/* ===================== */
+@media (max-width: 768px) {
+  .chatbot-container {
+    right: 15px;
+    bottom: 15px;
+  }
+  
+  .chatbot-expanded {
+    width: calc(100vw - 30px);
+    max-height: 70vh;
+    right: 15px;
+    bottom: 80px;
+  }
+  
+  .chatbot-icon {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .chatbot-body {
+    height: auto;
+    max-height: 65vh;
+  }
+  
+  .chatbot-message {
+    max-width: 90%;
+    font-size: 0.9rem;
+  }
+}
+
+/* ===================== */
+/* SCROLLBAR STYLING */
+/* ===================== */
+.chatbot-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatbot-messages::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.chatbot-messages::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.chatbot-messages::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Authentication forms */
+.auth-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.auth-container h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #1d4ed8;
+}
+
+.alert-error {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border-radius: 4px;
+}
+
+.welcome-message {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.logout-btn {
+  padding: 0.5rem 1rem;
+  background-color: #ef4444;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
+}
+
+/* Add new property */
+.add-property-btn {
+  padding: 10px 20px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.add-property-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+  color: white;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+/* Tenants card */
+.tenant-card {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.search-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  margin-bottom: 10px;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.filter-group input,
+.filter-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Tenant Reviews */
+/* Reviews styling */
+.property-ratings {
+    margin: 10px 0;
+}
+
+.stars {
+    color: gold;
+    font-size: 1.2em;
+}
+
+.stars span {
+    color: #333;
+    font-size: 0.9em;
+    margin-left: 5px;
+}
+
+.review-btn {
+    background-color: #4a6fa5;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.review-btn:hover {
+    background-color: #3a5a8a;
+}
+
+/* Review modal */
+.review-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.review-modal .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+}
+
+.star-rating {
+    margin: 10px 0;
+    font-size: 1.5em;
+}
+
+.star-rating .star {
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+#review-text {
+    width: 100%;
+    height: 100px;
+    margin: 10px 0;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Dashboard Styles */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.dashboard-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.preferences-card {
+    background: white;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #4a6fa5;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    background-color: #3a5a8a;
+}
+
+/* Preferences Form Styles */
+.preferences-form {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.preferences-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.preferences-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.preferences-form input,
+.preferences-form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-secondary {
+    background-color: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #4b5563;
+}
+
+/* Style for remember me checkbox */
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.form-group input[type="checkbox"] {
+    margin: 0;
+    width: auto;
+}

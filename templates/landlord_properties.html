@@ -1,0 +1,16 @@
+{% extends "landlord_base.html" %}
+
+{% block content %}
+<div class="properties-container">
+    <h2>Your Properties</h2>
+    <div class="property-list">
+        {% for property in properties %}
+        <div class="property-card">
+            <h3>{{ property.address }}</h3>
+            <p>Rent: ${{ property.price }}</p>
+            <!-- Add more property details -->
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

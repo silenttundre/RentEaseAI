@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | RentEase AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+      .contact-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .contact-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .contact-header h1 {
+        font-size: 2.5rem;
+        color: var(--nav-blue);
+        margin-bottom: 10px;
+      }
+
+      .contact-header p {
+        color: var(--text);
+        font-size: 1.1rem;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .contact-card {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: var(--card-shadow);
+        transition: transform 0.2s;
+      }
+
+      .contact-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .contact-card h3 {
+        color: var(--nav-blue);
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+      }
+
+      .contact-info {
+        margin-bottom: 15px;
+      }
+
+      .contact-info p {
+        margin: 8px 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .contact-info i {
+        margin-right: 10px;
+        color: var(--primary);
+        width: 20px;
+        text-align: center;
+      }
+
+      .contact-form {
+        background: white;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: var(--card-shadow);
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .contact-form h2 {
+        margin-top: 0;
+        color: var(--nav-blue);
+        text-align: center;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 16px;
+      }
+
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .form-submit {
+        text-align: center;
+      }
+
+      .form-submit button {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: opacity 0.2s;
+      }
+
+      .form-submit button:hover {
+        opacity: 0.9;
+      }
+
+      .office-hours {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .office-hours h4 {
+        margin-bottom: 10px;
+      }
+
+      .office-hours p {
+        margin: 5px 0;
+      }
+
+      @media (max-width: 768px) {
+        .contact-header h1 {
+          font-size: 2rem;
+        }
+
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+        <a href="/">
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="RentEase AI" class="circle-logo">
+        </a>
+        <nav>
+            <a href="/about">About</a>
+            <a href="/contact" class="active">Contact</a>
+            <a href="{{ url_for('landlord_login') }}">For Landlords</a>
+            <a href="/tenant">For Tenants</a>
+        </nav>
+    </header>
+    <div class="main-container">
+      <div class="contact-container">
+        <div class="contact-header">
+          <h1>Contact RentEase AI</h1>
+          <p>Have questions about our services or need assistance? Reach out to our team through any of the channels below or fill out the contact form.</p>
+        </div>
+        <div class="contact-grid">
+          <div class="contact-card">
+            <h3>General Inquiries</h3>
+            <div class="contact-info">
+              <p>
+                <i>📧</i> info@renteaseai.com
+              </p>
+              <p>
+                <i>📞</i> (555) 123-4567
+              </p>
+              <p>
+                <i>📱</i> (555) 765-4321
+              </p>
+            </div>
+            <div class="office-hours">
+              <h4>Office Hours</h4>
+              <p>Monday-Friday: 9am - 6pm</p>
+              <p>Saturday: 10am - 4pm</p>
+              <p>Sunday: Closed</p>
+            </div>
+          </div>
+          <div class="contact-card">
+            <h3>Technical Support</h3>
+            <div class="contact-info">
+              <p>
+                <i>📧</i> support@renteaseai.com
+              </p>
+              <p>
+                <i>📞</i> (555) 987-6543
+              </p>
+              <p>
+                <i>💻</i> Live Chat Available
+              </p>
+            </div>
+            <div class="office-hours">
+              <h4>Support Hours</h4>
+              <p>24/7 for urgent issues</p>
+              <p>Response time: &lt; 2 hours</p>
+            </div>
+          </div>
+          <div class="contact-card">
+            <h3>Corporate Office</h3>
+            <div class="contact-info">
+              <p>
+                <i>🏢</i> 123 Tech Park Drive
+              </p>
+              <p>
+                <i>📍</i> Suite 200, Innovation District
+              </p>
+              <p>
+                <i>🌎</i> San Francisco, CA 94107
+              </p>
+            </div>
+            <div class="office-hours">
+              <h4>Visiting Hours</h4>
+              <p>By appointment only</p>
+              <p>Free parking available</p>
+            </div>
+          </div>
+        </div>
+        <div class="contact-form">
+          <h2>Send Us a Message</h2>
+          <form id="contactForm">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone">
+            </div>
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <select id="subject" name="subject">
+                <option value="general">General Inquiry</option>
+                <option value="technical">Technical Support</option>
+                <option value="landlord">Landlord Services</option>
+                <option value="tenant">Tenant Services</option>
+                <option value="feedback">Feedback/Suggestions</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message">Your Message</label>
+              <textarea id="message" name="message" required></textarea>
+            </div>
+            <div class="form-submit">
+              <button type="submit">Send Message</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Get form values
+        const formData = {
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          phone: document.getElementById('phone').value,
+          subject: document.getElementById('subject').value,
+          message: document.getElementById('message').value
+        };
+        // In a real app, you would send this to your backend
+        console.log('Form submitted:', formData);
+        // Show success message
+        alert('Thank you for your message! We will get back to you within 24 hours.');
+        // Reset form
+        this.reset();
+      });
+    </script>
+    <!-- Include chatbot widget -->
+    {% include 'chatbot-widget.html' %}
+  </body>
+</html>

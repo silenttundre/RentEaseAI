@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Search Results | RentEase AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --bg-color: #f8fafc;
+            --card-bg: white;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 30px;
+        }
+        
+        .tenant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .tenant-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .tenant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        
+        .tenant-info {
+            margin-bottom: 15px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            background: #e0f2fe;
+            color: #0369a1;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        /* Loading Spinner */
+        #loadingModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+        }
+        
+        .spinner-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+        }
+        
+        /* Contact Modal */
+        .contact-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            margin: 100px auto;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .modal-close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .contact-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .contact-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .tenant-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-options {
+                flex-direction: column;
+            }
+        }
+        /* Add these styles to your existing CSS */
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+            width: fit-content;
+        }
+
+        .back-btn:hover {
+            color: #3b82f6;
+        }
+
+        .back-btn i {
+            font-size: 12px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .circle-logo {
+            width: 40px;  /* Smaller size */
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+            padding: 2px;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;  /* Vertically center items */
+            gap: 15px;
+        }
+        
+        /* Adjust header layout */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .circle-logo {
+            transition: transform 0.3s ease;
+        }
+        
+        .circle-logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .page-title {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-left: 10px;
+            font-weight: 400;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .circle-logo {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .header-left h1 {
+                font-size: 1.5rem;
+            }
+            .logo-container {
+                margin-bottom: 5px;
+            }
+            
+            .page-title {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <a href="{{ url_for('landlord_dashboard') }}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <div class="logo-container">
+                    <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="RentEase AI" class="circle-logo">
+                    <h1 class="logo-text">RentEase AI</h1>
+                </div>
+                <span class="page-title">Tenant Results</span>
+            </div>
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="fas fa-print"></i> Print Results
+            </button>
+        </header>
+        
+        <!-- Loading Spinner Modal -->
+        <div id="loadingModal">
+            <div class="spinner-container">
+                <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h3 class="mt-3">Finding Qualified Tenants...</h3>
+            </div>
+        </div>
+        
+        <!-- Contact Modal -->
+        <div id="contactModal" class="contact-modal">
+            <div class="modal-content">
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+                <h3 id="tenantName">Contact Tenant</h3>
+                <div class="tenant-details">
+                    <div class="tenant-info">
+                        <h4>Email</h4>
+                        <p id="tenantEmail"></p>
+                    </div>
+                    <div class="tenant-info">
+                        <h4>Phone</h4>
+                        <p id="tenantPhone"></p>
+                    </div>
+                </div>
+                <div class="contact-options">
+                    <button class="contact-btn btn-primary" onclick="sendEmail()">
+                        <i class="fas fa-envelope"></i> Email
+                    </button>
+                    <button class="contact-btn btn-secondary" onclick="callTenant()">
+                        <i class="fas fa-phone"></i> Call
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Add this section at the top of tenant-results.html -->
+        <section class="card">
+            <h2><i class="fas fa-home"></i> Your Properties</h2>
+            <div class="property-list">
+                {% for property_data in properties_with_tenants %}
+                <div class="property-card">
+                    <h3>{{ property_data.property.address }}</h3>
+                    <p>{{ property_data.property.location }}</p>
+                    <p>Price: ${{ "%.2f"|format(property_data.property.price) }}</p>
+                    <p>Bedrooms: {{ property_data.property.bedrooms }}, Bathrooms: {{ property_data.property.bathrooms }}</p>
+                    <div class="ai-summary">
+                        {{ property_data.ai_summary|markdown_to_html|safe }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        <section class="card">
+            <h2><i class="fas fa-robot"></i> AI Recommendations</h2>
+            <div class="ai-summary">
+                {{ ai_summary|safe }}
+            </div>
+        </section>
+        
+        <section class="card">
+            <h2><i class="fas fa-users"></i> Matching Tenants</h2>
+            <div class="tenant-grid">
+                {% for tenant in tenants %}
+                <div class="tenant-card" onclick="showContactModal('{{ tenant.id }}')">
+                    <h3>{{ tenant.first_name }} {{ tenant.last_name }}</h3>
+                    
+                    <div class="tenant-info">
+                        <h4>Budget</h4>
+                        <p>${% if tenant.max_budget %}{{ "%.2f"|format(tenant.max_budget) }}{% else %}Not specified{% endif %}</p>
+                    </div>
+                    
+                    <div class="tenant-info">
+                        <h4>Property Preference</h4>
+                        <p>{{ tenant.preferred_type or 'Any type' }}</p>
+                    </div>
+                    
+                    {% if tenant.amenities_required %}
+                    <div class="tenant-info">
+                        <h4>Required Amenities</h4>
+                        <p>
+                            {% for amenity in tenant.amenities_required.split(', ') %}
+                            <span class="badge">{{ amenity }}</span>
+                            {% endfor %}
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="tenant-info">
+                        <h4>Contact</h4>
+                        <p>{{ tenant.email }}<br>{{ tenant.phone or 'Not provided' }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <p>No matching tenants found.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Tenant data storage
+        const tenantsData = {
+            {% for tenant in tenants %}
+            '{{ tenant.id }}': {
+                name: '{{ tenant.first_name }} {{ tenant.last_name }}',
+                email: '{{ tenant.email }}',
+                phone: '{{ tenant.phone }}'
+            },
+            {% endfor %}
+            currentTenant: null
+        };
+
+        // Show contact modal
+        function showContactModal(tenantId) {
+            const tenant = tenantsData[tenantId];
+            tenantsData.currentTenant = tenant;
+            
+            document.getElementById('tenantName').textContent = `Contact ${tenant.name}`;
+            document.getElementById('tenantEmail').textContent = tenant.email;
+            document.getElementById('tenantPhone').textContent = tenant.phone || 'Not provided';
+            document.getElementById('contactModal').style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('contactModal').style.display = 'none';
+        }
+
+        // Send email
+        function sendEmail() {
+            const tenant = tenantsData.currentTenant;
+            if (tenant.email) {
+                window.location.href = `mailto:${tenant.email}?subject=Property%20Interest%20from%20RentEase%20AI`;
+            } else {
+                alert('No email address available for this tenant');
+            }
+        }
+
+        // Call tenant
+        function callTenant() {
+            const tenant = tenantsData.currentTenant;
+            if (tenant.phone) {
+                window.location.href = `tel:${tenant.phone}`;
+            } else {
+                alert('No phone number available for this tenant');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('contactModal')) {
+                closeModal();
+            }
+        }
+
+        // Show loading spinner during page load if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // If you need to load data asynchronously after page load:
+            // document.getElementById('loadingModal').style.display = 'block';
+            // fetchData().then(() => {
+            //     document.getElementById('loadingModal').style.display = 'none';
+            // });
+        });
+    </script>
+</body>
+</html>

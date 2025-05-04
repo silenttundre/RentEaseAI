@@ -1,0 +1,18 @@
+<header>
+    <a href="/">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="RentEase AI" class="circle-logo">
+    </a>
+    <nav>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="{{ url_for('landlord_login') }}">For Landlords</a>
+        <a href="/tenant">For Tenants</a>
+    </nav>
+    
+    {% if current_user.is_authenticated %}
+    <div class="user-info">
+        <p class="welcome-message">Welcome, {{ current_user.first_name }}!</p>
+        <a href="{{ url_for('landlord_logout') }}" class="logout-btn">Logout</a>
+    </div>
+    {% endif %}
+</header>
