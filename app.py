@@ -28,7 +28,7 @@ app.config.update(
 # This config is for PRODUCTION
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://vanlam2024:2025StartupCenter@vanlam2024.mysql.pythonanywhere-services.com/vanlam2024$renteaseai'
 # Google Gemini AI Setup
-#os.environ['GOOGLE_API_KEY'] = "AIzaSyDghecxEuRdegKoUHaaNzci_JccHZlAb-c"
+#os.environ['GOOGLE_API_KEY'] = "GOOGLE_API_KEY"
 
 # This config is for DEV
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:121Deepmind@localhost/renteaseai'
